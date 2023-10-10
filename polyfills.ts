@@ -1,1 +1,1 @@
-import 'fast-text-encoding';
+import 'fastestsmallesttextencoderdecoder';

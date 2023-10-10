@@ -15,7 +15,7 @@
     "eslint-config-prettier": "^9.0.0",
     "expo": "~49.0.13",
     "expo-status-bar": "~1.6.0",
-    "fast-text-encoding": "^1.0.6",
+    "fastestsmallesttextencoderdecoder": "^1.0.22",
     "prettier": "^3.0.3",
     "react": "18.2.0",
     "react-native": "0.72.5",
