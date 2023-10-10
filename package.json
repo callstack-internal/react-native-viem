@@ -10,14 +10,16 @@
   },
   "dependencies": {
     "@callstack/eslint-config": "^14.0.0",
+    "@types/react": "~18.2.14",
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
     "expo": "~49.0.13",
     "expo-status-bar": "~1.6.0",
+    "fast-text-encoding": "^1.0.6",
     "prettier": "^3.0.3",
     "react": "18.2.0",
     "react-native": "0.72.5",
-    "@types/react": "~18.2.14"
+    "viem": "^1.16.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
