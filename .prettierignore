@@ -37,5 +37,5 @@ yarn-error.*
 # JetBrains
 .idea
 
-# ENV
-.env
+# rn-nodeify
+shim.js
