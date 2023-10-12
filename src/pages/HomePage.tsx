@@ -1,21 +1,55 @@
 import React, {useEffect, useState} from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
-import {Address, Chain, formatEther, hexToNumber} from 'viem';
+import {Address, Chain, createWalletClient, custom, formatEther} from 'viem';
 import {mainnet, sepolia} from 'viem/chains';
 import {publicClient} from '../clients/public';
-import {useWalletClient} from '../contexts/WalletClientContext';
+import {useWalletConnectModal} from '@walletconnect/modal-react-native';
 
 export const CHAINS = [mainnet, sepolia];
 
+type ConnectEventInfo = {
+  session: {
+    namespaces: {
+      eip155: {
+        chains: `eip155:${number}`[];
+      };
+    };
+  };
+};
+
 export default function HomePage() {
-  const {provider, walletClient} = useWalletClient();
+  const {
+    open,
+    isConnected,
+    provider,
+    address: wcAddress,
+  } = useWalletConnectModal();
+  const address = wcAddress as Address | undefined;
+  const walletClient = createWalletClient({
+    chain: mainnet,
+    transport: custom({
+      async request({method, params}) {
+        return await provider?.request({method, params});
+      },
+    }),
+  });
+
   const [blockNumber, setBlockNumber] = useState(BigInt(0));
   const [gasPrice, setGasPrice] = useState(BigInt(0));
-  const [isConnected, setIsConnected] = useState(false);
   const [chain, setChain] = useState<Chain>(CHAINS[0]);
-  const [address, setAddress] = useState<Address>('0x0000');
   const [balance, setBalance] = useState(BigInt(0));
-  const filteredChains = CHAINS.filter(item => item.id !== chain.id);
+  const [signature, setSignature] = useState<`0x${string}`>();
+
+  const onSignMessage = async () => {
+    if (address) {
+      const signature = await walletClient.signMessage({
+        account: address,
+        message: 'Sign this message to prove you are the owner of this wallet',
+      });
+
+      setSignature(signature);
+    }
+  };
 
   useEffect(() => {
     const getNetworkData = async () => {
@@ -32,39 +66,37 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    const onChainChangedEvent = (arg: unknown) => {
-      const data = arg as `0x${string}`;
-      const chainId = hexToNumber(data);
-      const chain = CHAINS.find(chain => chain.id === chainId) ?? CHAINS[0];
+    const onChainChangedEvent = (chainId: string) => {
+      const chain =
+        CHAINS.find(chain => chain.id === Number(chainId)) ?? CHAINS[0];
       setChain(chain);
     };
 
-    const onConnectEvent = async (arg: unknown) => {
-      const data = arg as {chainId: `0x${string}`};
-      onChainChangedEvent(data.chainId);
+    const onConnectEvent = async (info: ConnectEventInfo) => {
+      const chainId = info.session.namespaces.eip155.chains[0].replace(
+        'eip155:',
+        '',
+      );
 
-      const [address] = await walletClient.getAddresses();
-      const balance = await publicClient.getBalance({address});
+      onChainChangedEvent(chainId);
 
-      setAddress(address);
-      setBalance(balance);
-      setIsConnected(true);
+      if (address) {
+        const balance = await publicClient.getBalance({
+          address,
+        });
+        setBalance(balance);
+      }
     };
 
-    const onDisconnectEvent = () => {
-      setIsConnected(false);
-    };
-
-    provider.on('chainChanged', onChainChangedEvent);
-    provider.on('connect', onConnectEvent);
-    provider.on('disconnect', onDisconnectEvent);
+    // @ts-ignore
+    provider?.on('connect', onConnectEvent);
+    provider?.on('chainChanged', onChainChangedEvent);
 
     return () => {
-      provider.removeListener('chainChanged', onChainChangedEvent);
-      provider.removeListener('connect', onConnectEvent);
-      provider.removeListener('disconnect', onDisconnectEvent);
+      provider?.removeListener('chainChanged', onChainChangedEvent);
+      provider?.removeListener('connect', onConnectEvent);
     };
-  }, [provider, walletClient]);
+  }, [address, provider, walletClient]);
 
   return (
     <View style={styles.container}>
@@ -75,31 +107,28 @@ export default function HomePage() {
         <View style={styles.block}>
           <Text numberOfLines={1}>Address: {address}</Text>
           <Text numberOfLines={1}>Balance: {formatEther(balance)} ETH</Text>
+          <Text>Connected to: {chain.name}</Text>
+
+          {signature && (
+            <View style={styles.block}>
+              <Text>Signature: {signature}</Text>
+            </View>
+          )}
         </View>
       )}
 
       <View style={styles.block}>
         {isConnected ? (
           <>
-            <Text style={styles.chainText}>Connected to: {chain.name}</Text>
-            {filteredChains.map(chain => (
-              <Button
-                key={chain.id}
-                title={`Switch to ${chain.name}`}
-                onPress={() => walletClient.switchChain({id: chain.id})}
-              />
-            ))}
+            <Button title="Sign message" onPress={onSignMessage} />
             <Button
               title="Disconnect"
-              onPress={() => provider.handleDisconnect({terminate: true})}
+              onPress={() => provider?.disconnect()}
               color="red"
             />
           </>
         ) : (
-          <Button
-            title="Connect"
-            onPress={() => walletClient.requestAddresses()}
-          />
+          <Button title="Connect" onPress={() => open()} />
         )}
       </View>
     </View>
@@ -113,8 +142,5 @@ const styles = StyleSheet.create({
   },
   block: {
     marginTop: 32,
-  },
-  chainText: {
-    textAlign: 'center',
   },
 });
