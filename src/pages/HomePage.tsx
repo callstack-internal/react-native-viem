@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
 import {Address, Chain, createWalletClient, custom, formatEther} from 'viem';
 import {mainnet, sepolia} from 'viem/chains';
-import {publicClient} from '../clients/public';
 import {useWalletConnectModal} from '@walletconnect/modal-react-native';
+import {publicClient} from '../clients/public';
 
 export const CHAINS = [mainnet, sepolia];
 
@@ -25,19 +25,24 @@ export default function HomePage() {
     address: wcAddress,
   } = useWalletConnectModal();
   const address = wcAddress as Address | undefined;
-  const walletClient = createWalletClient({
-    chain: mainnet,
-    transport: custom({
-      async request({method, params}) {
-        return await provider?.request({method, params});
-      },
-    }),
-  });
 
-  const [blockNumber, setBlockNumber] = useState(BigInt(0));
-  const [gasPrice, setGasPrice] = useState(BigInt(0));
+  const walletClient = useMemo(
+    () =>
+      createWalletClient({
+        chain: mainnet,
+        transport: custom({
+          async request({method, params}) {
+            return await provider?.request({method, params});
+          },
+        }),
+      }),
+    [provider],
+  );
+
+  const [blockNumber, setBlockNumber] = useState(0n);
+  const [gasPrice, setGasPrice] = useState(0n);
   const [chain, setChain] = useState<Chain>(CHAINS[0]);
-  const [balance, setBalance] = useState(BigInt(0));
+  const [balance, setBalance] = useState(0n);
   const [signature, setSignature] = useState<`0x${string}`>();
 
   const onSignMessage = async () => {

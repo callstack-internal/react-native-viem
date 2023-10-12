@@ -1,8 +1,8 @@
 export const providerMetadata = {
-  name: 'Callstack',
-  description: 'Callstack',
+  name: 'Example dApp',
+  description: 'Modern Example dApp from Callstack',
   url: 'https://callstack.com/',
-  icons: ['https://your-project-logo.com/'],
+  icons: ['https://example.com/'],
   redirect: {
     native: 'rnviem://',
   },
