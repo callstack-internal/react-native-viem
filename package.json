@@ -4,40 +4,27 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
-    "web": "expo start --web",
-    "postinstall": "rn-nodeify --install 'crypto,process,stream,events' --hack"
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
   },
   "dependencies": {
     "@callstack/eslint-config": "^14.0.0",
-    "@metamask/sdk": "^0.8.0",
     "@react-native-async-storage/async-storage": "1.18.2",
     "@react-native-community/netinfo": "9.3.10",
     "@types/react": "~18.2.14",
     "@walletconnect/modal-react-native": "^1.0.0-rc.11",
-    "crypto": "^1.0.1",
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
-    "events": "^3.3.0",
     "expo": "~49.0.13",
-    "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.6.0",
     "fastestsmallesttextencoderdecoder": "^1.0.22",
     "prettier": "^3.0.3",
-    "process": "^0.11.10",
     "react": "18.2.0",
     "react-native": "0.72.5",
-    "react-native-background-timer": "^2.4.1",
-    "react-native-crypto": "^2.2.0",
     "react-native-get-random-values": "^1.9.0",
     "react-native-modal": "^13.0.1",
-    "react-native-randombytes": "^3.6.1",
     "react-native-svg": "13.9.0",
-    "readable-stream": "^1.0.33",
-    "rn-nodeify": "^10.3.0",
-    "stream": "^0.0.2",
-    "stream-browserify": "^1.0.0",
     "viem": "^1.16.2"
   },
   "devDependencies": {
@@ -50,23 +37,5 @@
         "react-native-get-random-values"
       ]
     }
-  },
-  "react-native": {
-    "crypto": "react-native-crypto",
-    "_stream_transform": "readable-stream/transform",
-    "_stream_readable": "readable-stream/readable",
-    "_stream_writable": "readable-stream/writable",
-    "_stream_duplex": "readable-stream/duplex",
-    "_stream_passthrough": "readable-stream/passthrough",
-    "stream": "stream-browserify"
-  },
-  "browser": {
-    "crypto": "react-native-crypto",
-    "_stream_transform": "readable-stream/transform",
-    "_stream_readable": "readable-stream/readable",
-    "_stream_writable": "readable-stream/writable",
-    "_stream_duplex": "readable-stream/duplex",
-    "_stream_passthrough": "readable-stream/passthrough",
-    "stream": "stream-browserify"
   }
 }

@@ -17,7 +17,6 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.callstack.reactnativeviem",
       "infoPlist": {
         "LSApplicationQueriesSchemes": [
           "metamask",
@@ -32,8 +31,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.callstack.reactnativeviem"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"

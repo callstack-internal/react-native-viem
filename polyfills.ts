@@ -1,2 +1,1 @@
 import 'fastestsmallesttextencoderdecoder';
-import './shim';
